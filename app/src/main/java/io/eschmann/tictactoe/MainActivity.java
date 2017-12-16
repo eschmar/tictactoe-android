@@ -1,8 +1,10 @@
 package io.eschmann.tictactoe;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +33,16 @@ public class MainActivity extends Activity {
                     return;
                 }
 
+                usernameInput.clearFocus();
                 findViewById(R.id.usernameScreen).setVisibility(View.GONE);
                 findViewById(R.id.loadingScreen).setVisibility(View.VISIBLE);
+                hideKeyboard(view);
             }
         });
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 }
