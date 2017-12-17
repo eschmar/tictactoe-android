@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.w3c.dom.Text;
 
 import io.eschmann.tictactoe.R;
+import io.eschmann.tictactoe.model.Message;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -94,6 +97,11 @@ public class MatchActivity extends Activity {
         Request request = new Request.Builder().url(MATCHMAKING_SERVER_URL).build();
         MatchWebSocketListener listener = new MatchWebSocketListener();
         websocket = client.newWebSocket(request, listener);
+
+        Message temp = new Message(Message.TYPE_START, "Gson :)");
+        Gson gson = new Gson();
+        websocket.send(gson.toJson(temp));
+
         websocket.send("Send a text.");
         client.dispatcher().executorService().shutdown();
         return true;
