@@ -3,6 +3,7 @@ package io.eschmann.tictactoe.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
+
+import java.util.logging.Logger;
 
 import io.eschmann.tictactoe.R;
 import io.eschmann.tictactoe.model.Message;
@@ -29,6 +32,10 @@ public class MatchActivity extends Activity {
     private OkHttpClient client;
     private WebSocket websocket;
     private TextView tempText;
+    private TextView opponentLabel;
+    private TextView scoreLabel;
+    private Gson gson;
+
     private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
@@ -36,6 +43,7 @@ public class MatchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match);
+        gson = new Gson();
 
         // Extract username from intent
         Intent intent = getIntent();
@@ -47,11 +55,10 @@ public class MatchActivity extends Activity {
             finish();
         }
 
-        // set up game
-        findViewById(R.id.loadingScreen).setVisibility(View.GONE);
-        findViewById(R.id.matchView).setVisibility(View.VISIBLE);
-
+        // set up view components
         tempText = (TextView) findViewById(R.id.logInput);
+        opponentLabel = (TextView) findViewById(R.id.opponentLabel);
+        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
     }
 
     @Override
@@ -73,6 +80,12 @@ public class MatchActivity extends Activity {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             output("Receiving : " + text);
+
+//            try {
+//                handleMessage(gson.fromJson(text, Message.class));
+//            } catch (IllegalStateException e) {
+//                Log.i(MatchActivity.class.toString(), "Not a gson obj.");
+//            }
         }
 
         @Override
@@ -88,6 +101,8 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            Log.e(MatchActivity.class.toString(), t.getMessage());
+            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
             toast("Error : " + t.getMessage());
         }
     }
@@ -99,7 +114,6 @@ public class MatchActivity extends Activity {
         websocket = client.newWebSocket(request, listener);
 
         Message temp = new Message(Message.TYPE_START, "Gson :)");
-        Gson gson = new Gson();
         websocket.send(gson.toJson(temp));
 
         websocket.send("Send a text.");
@@ -114,6 +128,20 @@ public class MatchActivity extends Activity {
                 tempText.setText(tempText.getText().toString() + "\n" + txt);
             }
         });
+    }
+
+    private void handleMessage(final Message message) {
+        if (message.getType().equals(Message.TYPE_START)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    opponentLabel.setText("Opponent: " + message.getPayload());
+                    scoreLabel.setText("Score: 0");
+                    findViewById(R.id.loadingScreen).setVisibility(View.GONE);
+                    findViewById(R.id.matchView).setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     private void toast(final String message) {
