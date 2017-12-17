@@ -103,7 +103,7 @@ public class MatchActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tempText.setText(tempText.getText().toString() + "\n\n" + txt);
+                tempText.setText(tempText.getText().toString() + "\n" + txt);
             }
         });
     }
