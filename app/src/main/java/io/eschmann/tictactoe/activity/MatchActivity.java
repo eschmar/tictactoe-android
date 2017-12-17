@@ -48,7 +48,7 @@ public class MatchActivity extends Activity {
         findViewById(R.id.loadingScreen).setVisibility(View.GONE);
         findViewById(R.id.matchView).setVisibility(View.VISIBLE);
 
-        tempText = (TextView) findViewById(R.id.tempText);
+        tempText = (TextView) findViewById(R.id.logInput);
     }
 
     @Override
