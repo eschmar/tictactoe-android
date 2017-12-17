@@ -9,8 +9,14 @@ public class TicTacToeMatch {
     private String opponent = "Unknown";
     private String[] state;
 
+    public static final int GAME_SIZE = 3;
     public static final String GAME_PLAYER_MARKER = "X";
     public static final String GAME_OPPONENT_MARKER = "O";
+
+    public TicTacToeMatch(String opponentName) {
+        this.state = new String[9];
+        this.opponent = opponentName;
+    }
 
     public void opponentMakeMove(int row, int col) {
         makeMove(row, col, GAME_OPPONENT_MARKER);
@@ -25,19 +31,58 @@ public class TicTacToeMatch {
         if (!this.state[pos].equals("")) throw new IllegalStateException("Illegal move detected!");
 
         this.state[pos] = marker;
-        checkGameState();
+        checkGameState(row, col, marker);
     }
 
-    private void checkGameState() {
-        // check if game was won
+    private void checkGameState(int row, int col, String marker) {
+        // check row for win
+        for (int i = 0; i < GAME_SIZE; i++) {
+            if (!this.state[coordToPos(row, i)].equals(marker)) break;
+            if (i == GAME_SIZE - 1) {
+                resetGameAfterWin(marker);
+                return;
+            }
+        }
+
+        // check column for win
+        for (int i = 0; i < GAME_SIZE; i++) {
+            if (!this.state[coordToPos(i, col)].equals(marker)) break;
+            if (i == GAME_SIZE - 1) {
+                resetGameAfterWin(marker);
+                return;
+            }
+        }
+
+        // check diagonal
+        if (row == col) {
+            for (int i = 0; i < GAME_SIZE; i++) {
+                if (!this.state[coordToPos(i, i)].equals(marker)) break;
+                if (i == GAME_SIZE - 1) {
+                    resetGameAfterWin(marker);
+                    return;
+                }
+            }
+        }
+
+        //check anti diagonal
+        if (row + col == GAME_SIZE - 1) {
+            for (int i = 0; i < GAME_SIZE; i++) {
+                if (!this.state[coordToPos(i, GAME_SIZE - 1 - i)].equals(marker)) break;
+                if (i == GAME_SIZE - 1) {
+                    resetGameAfterWin(marker);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void resetGameAfterWin(String winner) {
+        if (winner.equals(GAME_PLAYER_MARKER)) this.score++;
+        this.state = new String[9];
     }
 
     private int coordToPos(int row, int col) {
         return 3 * (row - 1) + col;
-    }
-
-    public TicTacToeMatch() {
-        this.state = new String[9];
     }
 
     public int getScore() {
