@@ -56,9 +56,15 @@ public class MatchActivity extends Activity {
         }
 
         // set up view components
-        tempText = (TextView) findViewById(R.id.logInput);
+//        tempText = (TextView) findViewById(R.id.logInput);
         opponentLabel = (TextView) findViewById(R.id.opponentLabel);
-        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
+//        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
+
+        //
+        //
+        //  TODO: AsyncTask
+        //
+        //
     }
 
     @Override
@@ -79,13 +85,13 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            output("Receiving : " + text);
+//            output("Receiving : " + text);
 
-//            try {
-//                handleMessage(gson.fromJson(text, Message.class));
-//            } catch (IllegalStateException e) {
-//                Log.i(MatchActivity.class.toString(), "Not a gson obj.");
-//            }
+            try {
+                handleMessage(gson.fromJson(text, Message.class));
+            } catch (IllegalStateException e) {
+                Log.i(MatchActivity.class.toString(), "Not a gson obj.");
+            }
         }
 
         @Override
@@ -101,8 +107,8 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.e(MatchActivity.class.toString(), t.getMessage());
-            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
+//            Log.e(MatchActivity.class.toString(), t.getMessage());
+//            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
             toast("Error : " + t.getMessage());
         }
     }
@@ -113,10 +119,10 @@ public class MatchActivity extends Activity {
         MatchWebSocketListener listener = new MatchWebSocketListener();
         websocket = client.newWebSocket(request, listener);
 
-        Message temp = new Message(Message.TYPE_START, "Gson :)");
+        // send start message
+        Message temp = new Message(Message.TYPE_START, this.username);
         websocket.send(gson.toJson(temp));
 
-        websocket.send("Send a text.");
         client.dispatcher().executorService().shutdown();
         return true;
     }
@@ -135,12 +141,14 @@ public class MatchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    opponentLabel.setText("Opponent: " + message.getPayload());
-                    scoreLabel.setText("Score: 0");
+                    opponentLabel.setText("Message: " + message.getPayload());
+//                    scoreLabel.setText("Score: 0");
                     findViewById(R.id.loadingScreen).setVisibility(View.GONE);
                     findViewById(R.id.matchView).setVisibility(View.VISIBLE);
                 }
             });
+        } else if (message.getType().equals(Message.TYPE_ACTOR_PATH)) {
+            websocket.send(gson.toJson(message));
         }
     }
 
