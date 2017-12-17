@@ -26,7 +26,7 @@ public class MatchActivity extends Activity {
     private OkHttpClient client;
     private WebSocket websocket;
     private TextView tempText;
-    private static final String MATCHMAKING_SERVER_URL = "ws://arcane-taiga-14552.herokuapp.com/pingWs";
+    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
     @Override
@@ -94,6 +94,7 @@ public class MatchActivity extends Activity {
         Request request = new Request.Builder().url(MATCHMAKING_SERVER_URL).build();
         MatchWebSocketListener listener = new MatchWebSocketListener();
         websocket = client.newWebSocket(request, listener);
+        websocket.send("Send a text.");
         client.dispatcher().executorService().shutdown();
         return true;
     }
