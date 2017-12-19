@@ -36,7 +36,8 @@ public class MatchActivity extends Activity {
     private TextView scoreLabel;
     private Gson gson;
 
-    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
+//    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
+    private static final String MATCHMAKING_SERVER_URL = "ws://tictactoe-temp.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
     @Override
@@ -107,8 +108,8 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.e(MatchActivity.class.toString(), t.getMessage());
-            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
+//            Log.e(MatchActivity.class, t.getMessage());
+//            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
             toast("Error : " + t.getMessage());
         }
     }
