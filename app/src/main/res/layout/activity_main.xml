@@ -27,14 +27,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Message..."
+                android:hint="Name..."
                 android:inputType="textPersonName" />
 
             <Button
                 android:id="@+id/joinButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="send" />
+                android:text="join" />
         </LinearLayout>
     </ScrollView>
 

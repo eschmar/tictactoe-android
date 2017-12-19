@@ -56,9 +56,9 @@ public class MatchActivity extends Activity {
         }
 
         // set up view components
-//        tempText = (TextView) findViewById(R.id.logInput);
+        tempText = (TextView) findViewById(R.id.logInput);
         opponentLabel = (TextView) findViewById(R.id.opponentLabel);
-//        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
+        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
 
         //
         //
@@ -85,7 +85,7 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-//            output("Receiving : " + text);
+            output("Receiving : " + text);
 
             try {
                 handleMessage(gson.fromJson(text, Message.class));
@@ -107,8 +107,8 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-//            Log.e(MatchActivity.class.toString(), t.getMessage());
-//            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
+            Log.e(MatchActivity.class.toString(), t.getMessage());
+            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
             toast("Error : " + t.getMessage());
         }
     }
@@ -141,8 +141,8 @@ public class MatchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    opponentLabel.setText("Message: " + message.getPayload());
-//                    scoreLabel.setText("Score: 0");
+                    opponentLabel.setText("Opponent: " + message.getPayload());
+                    scoreLabel.setText("Score: 0");
                     findViewById(R.id.loadingScreen).setVisibility(View.GONE);
                     findViewById(R.id.matchView).setVisibility(View.VISIBLE);
                 }
