@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 
 import io.eschmann.tictactoe.R;
 import io.eschmann.tictactoe.model.Message;
+import io.eschmann.tictactoe.model.TicTacToeMatch;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,6 +37,8 @@ public class MatchActivity extends Activity {
     private TextView opponentLabel;
     private TextView scoreLabel;
     private Gson gson;
+
+    private TicTacToeMatch ticTacToeMatch;
 
 //    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final String MATCHMAKING_SERVER_URL = "ws://tictactoe-temp.herokuapp.com/connect";
@@ -60,6 +64,23 @@ public class MatchActivity extends Activity {
         tempText = (TextView) findViewById(R.id.logInput);
         opponentLabel = (TextView) findViewById(R.id.opponentLabel);
         scoreLabel = (TextView) findViewById(R.id.scoreLabel);
+
+        int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
+                R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
+                R.id.gameButton31, R.id.gameButton32, R.id.gameButton33};
+
+        for (int i = 0; i < gameButtons.length; i++) {
+            final Button tile = (Button) findViewById(gameButtons[i]);
+            final int position = i;
+
+            tile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ticTacToeMatch.playerMakeMove(position / 3, position % 3);
+                    tile.setText(ticTacToeMatch.getState(position / 3, position % 3));
+                }
+            });
+        }
 
         //
         //
@@ -146,6 +167,7 @@ public class MatchActivity extends Activity {
                     scoreLabel.setText("Score: 0");
                     findViewById(R.id.loadingScreen).setVisibility(View.GONE);
                     findViewById(R.id.matchView).setVisibility(View.VISIBLE);
+                    ticTacToeMatch = new TicTacToeMatch(message.getPayload());
                 }
             });
         } else if (message.getType().equals(Message.TYPE_ACTOR_PATH)) {

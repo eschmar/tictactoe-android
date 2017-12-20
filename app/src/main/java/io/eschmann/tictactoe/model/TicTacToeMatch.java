@@ -1,5 +1,7 @@
 package io.eschmann.tictactoe.model;
 
+import java.util.Arrays;
+
 /**
  * Created by marcel on 2017-12-16.
  */
@@ -15,6 +17,7 @@ public class TicTacToeMatch {
 
     public TicTacToeMatch(String opponentName) {
         this.state = new String[9];
+        Arrays.fill(this.state, "");
         this.opponent = opponentName;
     }
 
@@ -82,7 +85,7 @@ public class TicTacToeMatch {
     }
 
     private int coordToPos(int row, int col) {
-        return 3 * (row - 1) + col;
+        return 3 * row + col;
     }
 
     public int getScore() {

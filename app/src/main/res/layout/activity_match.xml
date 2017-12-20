@@ -70,22 +70,19 @@
                     android:id="@+id/gameButton11"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton13"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,22 +95,19 @@
                     android:id="@+id/gameButton21"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton22"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton23"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -125,22 +119,19 @@
                     android:id="@+id/gameButton31"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton32"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/gameButton33"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <EditText
