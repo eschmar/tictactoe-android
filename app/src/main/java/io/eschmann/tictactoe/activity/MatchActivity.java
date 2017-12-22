@@ -40,9 +40,13 @@ public class MatchActivity extends Activity {
 
     private TicTacToeMatch ticTacToeMatch;
 
-//    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
+    //    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final String MATCHMAKING_SERVER_URL = "ws://tictactoe-temp.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+
+    int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
+            R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
+            R.id.gameButton31, R.id.gameButton32, R.id.gameButton33};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +69,6 @@ public class MatchActivity extends Activity {
         opponentLabel = (TextView) findViewById(R.id.opponentLabel);
         scoreLabel = (TextView) findViewById(R.id.scoreLabel);
 
-        int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
-                R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
-                R.id.gameButton31, R.id.gameButton32, R.id.gameButton33};
-
         for (int i = 0; i < gameButtons.length; i++) {
             final Button tile = (Button) findViewById(gameButtons[i]);
             final int position = i;
@@ -78,6 +78,9 @@ public class MatchActivity extends Activity {
                 public void onClick(View v) {
                     ticTacToeMatch.playerMakeMove(position / 3, position % 3);
                     tile.setText(ticTacToeMatch.getState(position / 3, position % 3));
+
+                    Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
+                    websocket.send(gson.toJson(move));
                 }
             });
         }
@@ -172,6 +175,17 @@ public class MatchActivity extends Activity {
             });
         } else if (message.getType().equals(Message.TYPE_ACTOR_PATH)) {
             websocket.send(gson.toJson(message));
+        } else if (message.getType().equals(Message.TYPE_MOVE)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(message.getPayload());
+                    int position = Integer.parseInt(message.getPayload());
+                    ticTacToeMatch.opponentMakeMove(position / 3, position % 3);
+                    final Button tile = (Button) findViewById(gameButtons[position]);
+                    tile.setText(ticTacToeMatch.getState(position / 3, position % 3));
+                }
+            });
         }
     }
 
