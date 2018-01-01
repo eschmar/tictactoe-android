@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,10 +13,12 @@ import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import io.eschmann.tictactoe.R;
 import io.eschmann.tictactoe.model.Message;
+import io.eschmann.tictactoe.model.TicTacToeMatch;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -36,9 +39,16 @@ public class MatchActivity extends Activity {
     private TextView scoreLabel;
     private Gson gson;
 
-//    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
+    private TicTacToeMatch ticTacToeMatch;
+
+    //    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final String MATCHMAKING_SERVER_URL = "ws://tictactoe-temp.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+
+    // array of references to the 9 buttons (tiles) of the game board
+    int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
+            R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
+            R.id.gameButton31, R.id.gameButton32, R.id.gameButton33};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,8 @@ public class MatchActivity extends Activity {
         opponentLabel = (TextView) findViewById(R.id.opponentLabel);
         scoreLabel = (TextView) findViewById(R.id.scoreLabel);
 
+        setupBoardButtons();
+
         //
         //
         //  TODO: AsyncTask
@@ -76,6 +88,41 @@ public class MatchActivity extends Activity {
         }
 
         super.onDestroy();
+    }
+
+    private void setupBoardButtons() {
+        for (int i = 0; i < gameButtons.length; i++) {
+            final Button tile = (Button) findViewById(gameButtons[i]);
+            final int position = i;
+
+            tile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // make the move in the TicTacToeMatch object at given position.
+                    // if true is returned the player has won the game
+                    boolean playerWon = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
+
+                    // mark position by setting text and disabling button
+                    tile.setText(TicTacToeMatch.GAME_PLAYER_MARKER);
+                    tile.setEnabled(false);
+
+                    // disable all untouched buttons since it is opponent's turn
+                    disableButtonsWithPattern(ticTacToeMatch.getState());
+
+                    // send the move as a message to the opponent
+                    Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
+                    websocket.send(gson.toJson(move));
+
+                    if (playerWon) {
+                        toast("You won the match!");
+                        scoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
+                        clearAllButtons();
+                        enableAllButtons();
+                    }
+                }
+            });
+        }
     }
 
     private final class MatchWebSocketListener extends WebSocketListener {
@@ -146,10 +193,36 @@ public class MatchActivity extends Activity {
                     scoreLabel.setText("Score: 0");
                     findViewById(R.id.loadingScreen).setVisibility(View.GONE);
                     findViewById(R.id.matchView).setVisibility(View.VISIBLE);
+                    ticTacToeMatch = new TicTacToeMatch(message.getPayload());
                 }
             });
         } else if (message.getType().equals(Message.TYPE_ACTOR_PATH)) {
             websocket.send(gson.toJson(message));
+        } else if (message.getType().equals(Message.TYPE_MOVE)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int position = Integer.parseInt(message.getPayload());
+
+                    // make the move in the TicTacToeMatch object at given position.
+                    // if true is returned the opponent has won the game
+                    boolean opponentWon = ticTacToeMatch.opponentMakeMove(position / 3, position % 3);
+
+                    // mark position by setting text and disabling button
+                    final Button tile = (Button) findViewById(gameButtons[position]);
+                    tile.setText(TicTacToeMatch.GAME_OPPONENT_MARKER);
+                    tile.setEnabled(false);
+
+                    // enable all untouched buttons since the opponent made its move
+                    enableButtonsWithPattern(ticTacToeMatch.getState());
+
+                    if (opponentWon) {
+                        toast("Your opponent won the match!");
+                        clearAllButtons();
+                        enableAllButtons();
+                    }
+                }
+            });
         }
     }
 
@@ -160,5 +233,38 @@ public class MatchActivity extends Activity {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /* Enable all 9 buttons */
+    private void enableAllButtons() {
+        setButtonsEnabled(true, new String[]{"X","X","X","X","X","X","X","X","X"});
+    }
+
+    /* Disable buttons according to an array of 9 strings. */
+    private void disableButtonsWithPattern(String[] pattern) {
+        setButtonsEnabled(false, pattern);
+    }
+
+    /* Enable buttons according to an array of 9 strings. */
+    private void enableButtonsWithPattern(String[] pattern) {
+        setButtonsEnabled(true, pattern);
+    }
+
+    /*
+    Set 'enabled' property of buttons according to an array of 9 strings.
+    If the string is empty the button property is changed.
+    */
+    private void setButtonsEnabled(boolean enabled, String[] pattern) {
+        for (int i = 0; i < gameButtons.length; i++) {
+            if (pattern[i].equals("")) findViewById(gameButtons[i]).setEnabled(enabled);
+        }
+    }
+
+    /* Clear the text of all 9 buttons */
+    private void clearAllButtons() {
+        for (int gameButton : gameButtons) {
+            final Button tile = (Button) findViewById(gameButton);
+            tile.setText("");
+        }
     }
 }
