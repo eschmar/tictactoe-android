@@ -32,6 +32,9 @@ import okio.ByteString;
  */
 
 public class MatchActivity extends Activity {
+
+
+
     private String username;
     private OkHttpClient client;
     private WebSocket websocket;
@@ -54,8 +57,11 @@ public class MatchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match);
+        setContentView(R.layout.activity_match_neo);
         gson = new Gson();
+
+
+        
 
         // Extract username from intent
         Intent intent = getIntent();
