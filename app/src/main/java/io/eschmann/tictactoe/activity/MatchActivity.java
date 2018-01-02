@@ -42,8 +42,8 @@ public class MatchActivity extends Activity {
 
     private TicTacToeMatch ticTacToeMatch;
 
-    //    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
-    private static final String MATCHMAKING_SERVER_URL = "ws://tictactoe-temp.herokuapp.com/connect";
+    private static final String LOG_TAG = MatchActivity.class.toString();
+    private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
     // array of references to the 9 buttons (tiles) of the game board
@@ -83,12 +83,17 @@ public class MatchActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Toast.makeText(getApplicationContext(), "MatchActivity got destroyed", Toast.LENGTH_SHORT).show();
         if (websocket != null) {
+            // inform opponent about quitting
+            Message quit = new Message(Message.TYPE_QUIT);
+            websocket.send(gson.toJson(quit));
+
+            // close socket
             websocket.close(NORMAL_CLOSURE_STATUS, "Quit.");
         }
 
         super.onDestroy();
+        finish();
     }
 
     private void setupBoardButtons() {
@@ -139,7 +144,7 @@ public class MatchActivity extends Activity {
             try {
                 handleMessage(gson.fromJson(text, Message.class));
             } catch (IllegalStateException e) {
-                Log.i(MatchActivity.class.toString(), "Not a gson obj.");
+                Log.i(LOG_TAG, "Not a gson obj.");
             }
         }
 
@@ -151,14 +156,14 @@ public class MatchActivity extends Activity {
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, reason);
-            toast("Closing : " + code + " / " + reason);
+            Log.i(LOG_TAG, "Closing : " + reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-//            Log.e(MatchActivity.class, t.getMessage());
-//            Log.e(MatchActivity.class.toString(), t.getStackTrace().toString());
-            toast("Error : " + t.getMessage());
+            Log.e(LOG_TAG, t.getMessage());
+            Log.e(LOG_TAG, Log.getStackTraceString(t));
+            onDestroy();
         }
     }
 
@@ -230,6 +235,9 @@ public class MatchActivity extends Activity {
                     }
                 }
             });
+        } else if (message.getType().equals(Message.TYPE_QUIT)) {
+            toast("Opponent just left the game!");
+            this.onDestroy();
         }
     }
 
