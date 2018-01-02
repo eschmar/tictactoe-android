@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 public class TicTacToeMatch {
     private int score = 0;
+    private int opponentScore = 0;
     private String opponent = "Unknown";
     private String[] state;
 
@@ -83,6 +84,7 @@ public class TicTacToeMatch {
 
     private void resetGameAfterWin(String winner) {
         if (winner.equals(GAME_PLAYER_MARKER)) this.score++;
+        else this.opponentScore++;
         Arrays.fill(this.state, "");
     }
 
@@ -92,6 +94,10 @@ public class TicTacToeMatch {
 
     public int getScore() {
         return score;
+    }
+
+    public int getOpponentScore() {
+        return opponentScore;
     }
 
     public String getOpponent() {

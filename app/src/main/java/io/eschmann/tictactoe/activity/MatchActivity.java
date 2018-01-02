@@ -11,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -26,7 +24,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okhttp3.internal.ws.RealWebSocket;
 import okio.ByteString;
 
 /**
@@ -188,6 +185,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                 .readTimeout(0, TimeUnit.MINUTES)
                 .connectTimeout(0, TimeUnit.MINUTES)
                 .writeTimeout(0, TimeUnit.MINUTES)
+                .pingInterval(30, TimeUnit.SECONDS)
                 .build();
 
         // open new websocket
@@ -241,6 +239,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
                     if (opponentWon) {
                         toast("You lost!");
+                        opponentScoreLabel.setText(String.valueOf(ticTacToeMatch.getOpponentScore()));
                         clearAllButtons();
                         enableAllButtons();
                     }
