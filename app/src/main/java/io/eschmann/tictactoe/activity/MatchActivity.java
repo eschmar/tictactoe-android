@@ -78,6 +78,12 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        onDestroy();
+    }
+
+    @Override
     protected void onDestroy() {
         if (websocket != null) {
             // inform opponent about quitting
