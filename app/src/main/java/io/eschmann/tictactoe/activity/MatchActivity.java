@@ -164,11 +164,14 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             if (t.getMessage() != null) Log.e(LOG_TAG_WEBSOCKET, t.getMessage());
             if (Log.getStackTraceString(t) != null) Log.e(LOG_TAG_WEBSOCKET, Log.getStackTraceString(t));
 
-            // inform user about failure
+            // detect error
             Bundle dialogArgs = new Bundle();
-            dialogArgs.putInt("responseCode", response.code());
-            ErrorDialogFragment errorDialog = new ErrorDialogFragment();
+            if (response != null && !response.isSuccessful()) {
+                dialogArgs.putInt("responseCode", response.code());
+            }
 
+            // inform user about failure
+            ErrorDialogFragment errorDialog = new ErrorDialogFragment();
             errorDialog.setArguments(dialogArgs);
             errorDialog.show(getFragmentManager(), "errorDialog");
         }

@@ -54,6 +54,7 @@
             android:paddingStart="32dp"
             android:paddingTop="6dp"
             android:text="Opponent"
+            android:textSize="24sp"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -67,6 +68,7 @@
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:text="0"
+            android:textSize="24sp"
             android:textColor="@android:color/white" />
 
     </LinearLayout>
@@ -161,6 +163,7 @@
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:text="0"
+            android:textSize="24sp"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -174,6 +177,7 @@
             android:paddingStart="16dp"
             android:paddingTop="6dp"
             android:text="Player"
+            android:textSize="24sp"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

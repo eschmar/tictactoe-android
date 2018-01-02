@@ -5,4 +5,6 @@
     <string name="game_loading_matchmaking">Matchmaking...</string>
     <string name="dialog_error_503_title">503 Service Unavailable</string>
     <string name="dialog_error_503_message">It seems our servers are unavailable. Sorry about that. Please try again later!</string>
+    <string name="form_name_hint">Name...</string>
+    <string name="form_game_join">join</string>
 </resources>
