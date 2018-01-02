@@ -133,7 +133,7 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            output("Receiving : " + text);
+            Log.i(LOG_TAG, "Receiving : " + text);
 
             try {
                 handleMessage(gson.fromJson(text, Message.class));
@@ -144,7 +144,7 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            output("Receiving bytes : " + bytes.hex());
+            Log.i(LOG_TAG, "Receiving bytes : " + bytes.hex());
         }
 
         @Override
@@ -169,9 +169,9 @@ public class MatchActivity extends Activity {
                 .writeTimeout(0, TimeUnit.MINUTES)
                 .build();
 
+        // open new websocket
         Request request = new Request.Builder().url(MATCHMAKING_SERVER_URL).build();
-        MatchWebSocketListener listener = new MatchWebSocketListener();
-        websocket = client.newWebSocket(request, listener);
+        websocket = client.newWebSocket(request, new MatchWebSocketListener());
 
         // send start message
         Message temp = new Message(Message.TYPE_START, this.playerLabel.getText().toString());
@@ -179,15 +179,6 @@ public class MatchActivity extends Activity {
 
         client.dispatcher().executorService().shutdown();
         return true;
-    }
-
-    private void output(final String txt) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-//                tempText.setText(tempText.getText().toString() + "\n" + txt);
-            }
-        });
     }
 
     private void handleMessage(final Message message) {
