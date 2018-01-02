@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import org.w3c.dom.Text;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import io.eschmann.tictactoe.R;
@@ -149,7 +150,7 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, null);
+            webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, reason);
             toast("Closing : " + code + " / " + reason);
         }
 
@@ -162,7 +163,13 @@ public class MatchActivity extends Activity {
     }
 
     private boolean connectToMatchmakingServer() {
-        client = new OkHttpClient();
+        // configure client to have no timeouts
+        client = new OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MINUTES)
+                .connectTimeout(0, TimeUnit.MINUTES)
+                .writeTimeout(0, TimeUnit.MINUTES)
+                .build();
+
         Request request = new Request.Builder().url(MATCHMAKING_SERVER_URL).build();
         MatchWebSocketListener listener = new MatchWebSocketListener();
         websocket = client.newWebSocket(request, listener);
