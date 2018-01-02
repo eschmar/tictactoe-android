@@ -11,12 +11,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.eschmann.tictactoe.R;
 import io.eschmann.tictactoe.model.Message;
 import io.eschmann.tictactoe.model.TicTacToeMatch;
@@ -32,23 +30,20 @@ import okio.ByteString;
  */
 
 public class MatchActivity extends Activity {
-
-
-
-    private String username;
-    private OkHttpClient client;
-    private WebSocket websocket;
-    private TextView tempText;
-    private TextView opponentLabel;
-    private TextView scoreLabel;
-    private Gson gson;
-
-    private TicTacToeMatch ticTacToeMatch;
-
     private static final String LOG_TAG = MatchActivity.class.toString();
     private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
+    @BindView(R.id.playerLabel) TextView playerLabel;
+    @BindView(R.id.playerScoreLabel) TextView playerScoreLabel;
+    @BindView(R.id.opponentLabel) TextView opponentLabel;
+    @BindView(R.id.opponentScoreLabel) TextView opponentScoreLabel;
+
+    private OkHttpClient client;
+    private WebSocket websocket;
+    private Gson gson;
+
+    private TicTacToeMatch ticTacToeMatch;
     // array of references to the 9 buttons (tiles) of the game board
     int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
             R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
@@ -57,26 +52,19 @@ public class MatchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_neo);
+        setContentView(R.layout.activity_match);
+        ButterKnife.bind(this);
         gson = new Gson();
-
-
-        
 
         // Extract username from intent
         Intent intent = getIntent();
-        username = intent.getStringExtra(MainActivity.INTENT_EXTRA_USERNAME);
+        playerLabel.setText(intent.getStringExtra(MainActivity.INTENT_EXTRA_USERNAME));
 
         // Attempt connection to server
         if (!connectToMatchmakingServer()) {
             Toast.makeText(getApplicationContext(), "Unable to connect to matchmaking server.", Toast.LENGTH_LONG).show();
             finish();
         }
-
-        // set up view components
-        tempText = (TextView) findViewById(R.id.logInput);
-        opponentLabel = (TextView) findViewById(R.id.opponentLabel);
-        scoreLabel = (TextView) findViewById(R.id.scoreLabel);
 
         setupBoardButtons();
 
@@ -128,7 +116,7 @@ public class MatchActivity extends Activity {
 
                     if (playerWon) {
                         toast("You won the match!");
-                        scoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
+                        playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
                         clearAllButtons();
                         enableAllButtons();
                     }
@@ -186,7 +174,7 @@ public class MatchActivity extends Activity {
         websocket = client.newWebSocket(request, listener);
 
         // send start message
-        Message temp = new Message(Message.TYPE_START, this.username);
+        Message temp = new Message(Message.TYPE_START, this.playerLabel.getText().toString());
         websocket.send(gson.toJson(temp));
 
         client.dispatcher().executorService().shutdown();
@@ -197,7 +185,7 @@ public class MatchActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tempText.setText(tempText.getText().toString() + "\n" + txt);
+//                tempText.setText(tempText.getText().toString() + "\n" + txt);
             }
         });
     }
@@ -207,10 +195,15 @@ public class MatchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    opponentLabel.setText("Opponent: " + message.getPayload());
-                    scoreLabel.setText("Score: 0");
+                    // show opponent name
+                    opponentLabel.setText(message.getPayload());
+                    opponentScoreLabel.setText("0");
+
+                    // show game view
                     findViewById(R.id.loadingScreen).setVisibility(View.GONE);
-                    findViewById(R.id.matchView).setVisibility(View.VISIBLE);
+                    findViewById(R.id.gameGrid).setVisibility(View.VISIBLE);
+                    findViewById(R.id.opponentBar).setVisibility(View.VISIBLE);
+                    findViewById(R.id.playerBar).setVisibility(View.VISIBLE);
                     ticTacToeMatch = new TicTacToeMatch(message.getPayload());
                 }
             });
