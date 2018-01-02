@@ -161,8 +161,8 @@ public class MatchActivity extends Activity {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.e(LOG_TAG, t.getMessage());
-            Log.e(LOG_TAG, Log.getStackTraceString(t));
+            if (t.getMessage() != null) Log.e(LOG_TAG, t.getMessage());
+            if (Log.getStackTraceString(t) != null) Log.e(LOG_TAG, Log.getStackTraceString(t));
             onDestroy();
         }
     }
@@ -229,7 +229,7 @@ public class MatchActivity extends Activity {
                     enableButtonsWithPattern(ticTacToeMatch.getState());
 
                     if (opponentWon) {
-                        toast("Your opponent won the match!");
+                        toast("You lost!");
                         clearAllButtons();
                         enableAllButtons();
                     }
