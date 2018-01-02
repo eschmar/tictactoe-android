@@ -28,7 +28,7 @@
             android:id="@+id/progressLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Matchmaking..."
+            android:text="@string/game_loading_matchmaking"
             android:textAlignment="center" />
     </LinearLayout>
 

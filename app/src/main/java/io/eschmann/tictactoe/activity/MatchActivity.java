@@ -1,6 +1,7 @@
 package io.eschmann.tictactoe.activity;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +12,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eschmann.tictactoe.R;
+import io.eschmann.tictactoe.dialog.ErrorDialogFragment;
 import io.eschmann.tictactoe.model.Message;
 import io.eschmann.tictactoe.model.TicTacToeMatch;
 import okhttp3.OkHttpClient;
@@ -23,14 +26,16 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okhttp3.internal.ws.RealWebSocket;
 import okio.ByteString;
 
 /**
  * Created by marcel on 2017-12-16.
  */
 
-public class MatchActivity extends Activity {
+public class MatchActivity extends Activity implements ErrorDialogFragment.ErrorDialogListener {
     private static final String LOG_TAG = MatchActivity.class.toString();
+    private static final String LOG_TAG_WEBSOCKET = MatchActivity.MatchWebSocketListener.class.toString();
     private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
@@ -128,37 +133,50 @@ public class MatchActivity extends Activity {
     private final class MatchWebSocketListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-
+            // TODO: Reset game
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.i(LOG_TAG, "Receiving : " + text);
+            Log.i(LOG_TAG_WEBSOCKET, "Receiving : " + text);
 
             try {
                 handleMessage(gson.fromJson(text, Message.class));
             } catch (IllegalStateException e) {
-                Log.i(LOG_TAG, "Not a gson obj.");
+                Log.i(LOG_TAG_WEBSOCKET, "Not a gson obj.");
             }
         }
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.i(LOG_TAG, "Receiving bytes : " + bytes.hex());
+            Log.i(LOG_TAG_WEBSOCKET, "Receiving bytes : " + bytes.hex());
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, reason);
-            Log.i(LOG_TAG, "Closing : " + reason);
+            Log.i(LOG_TAG_WEBSOCKET, "Closing : " + reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            if (t.getMessage() != null) Log.e(LOG_TAG, t.getMessage());
-            if (Log.getStackTraceString(t) != null) Log.e(LOG_TAG, Log.getStackTraceString(t));
-            onDestroy();
+            // write to log
+            if (t.getMessage() != null) Log.e(LOG_TAG_WEBSOCKET, t.getMessage());
+            if (Log.getStackTraceString(t) != null) Log.e(LOG_TAG_WEBSOCKET, Log.getStackTraceString(t));
+
+            // inform user about failure
+            Bundle dialogArgs = new Bundle();
+            dialogArgs.putInt("responseCode", response.code());
+            ErrorDialogFragment errorDialog = new ErrorDialogFragment();
+
+            errorDialog.setArguments(dialogArgs);
+            errorDialog.show(getFragmentManager(), "errorDialog");
         }
+    }
+
+    @Override
+    public void onDialogDismiss(DialogFragment dialog) {
+        onDestroy();
     }
 
     private boolean connectToMatchmakingServer() {
