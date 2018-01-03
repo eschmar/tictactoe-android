@@ -158,7 +158,10 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, reason);
-            Log.i(LOG_TAG_WEBSOCKET, "Closing : " + reason);
+            Log.i(LOG_TAG_WEBSOCKET, "Closing : " + code + " / " + reason);
+
+            websocket = null;
+            opponentQuitTheGame();
         }
 
         @Override
@@ -252,9 +255,13 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                 }
             });
         } else if (message.getType().equals(Message.TYPE_QUIT)) {
-            toast("Opponent just left the game!");
-            this.onDestroy();
+            opponentQuitTheGame();
         }
+    }
+
+    private void opponentQuitTheGame() {
+        toast("Opponent just left the game!");
+        this.onDestroy();
     }
 
     private void toast(final String message) {
