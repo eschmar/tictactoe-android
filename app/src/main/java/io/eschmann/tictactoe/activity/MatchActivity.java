@@ -136,7 +136,6 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
     private final class MatchWebSocketListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            // TODO: Reset game
         }
 
         @Override
@@ -161,7 +160,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             Log.i(LOG_TAG_WEBSOCKET, "Closing : " + code + " / " + reason);
 
             websocket = null;
-            opponentQuitTheGame();
+            onDestroy();
         }
 
         @Override
@@ -255,13 +254,9 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                 }
             });
         } else if (message.getType().equals(Message.TYPE_QUIT)) {
-            opponentQuitTheGame();
+            toast("Opponent just left the game!");
+            this.onDestroy();
         }
-    }
-
-    private void opponentQuitTheGame() {
-        toast("Opponent just left the game!");
-        this.onDestroy();
     }
 
     private void toast(final String message) {
