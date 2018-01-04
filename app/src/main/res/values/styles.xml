@@ -11,4 +11,45 @@
 
         <item name="android:colorSecondary">@color/secondaryColor</item>
     </style>
+
+    <style name="AppTheme.TranslucentButton" parent="android:Widget.Material.Button.Colored">
+        <item name="android:background">@drawable/button_translucent</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.TranslucentLabel" parent="android:Widget.Material.TextView">
+        <item name="android:background">#44FFFFFF</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AppTheme.Game.PlayerBar.TextLabel" parent="android:Widget.Material.TextView">
+        <item name="android:background">#444444</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AppTheme.Game.PlayerBar.TextLabel.Translucent" parent="AppTheme.Game.PlayerBar.TextLabel">
+        <item name="android:background">#44FFFFFF</item>
+    </style>
+
+    <style name="AppTheme.Game.Button.Move" parent="android:Widget.Material.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:textSize">36sp</item>
+        <!-- <item name="android:layout_margin">2dp</item> -->
+    </style>
+
+    <style name="AppTheme.Game.Button.Move.Translucent" parent="AppTheme.Game.Button.Move">
+        <item name="android:background">@drawable/button_translucent</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

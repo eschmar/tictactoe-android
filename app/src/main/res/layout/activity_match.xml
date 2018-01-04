@@ -45,17 +45,13 @@
 
         <TextView
             android:id="@+id/opponentLabel"
+            style="@style/AppTheme.Game.PlayerBar.TextLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#444444"
-            android:paddingBottom="6dp"
             android:paddingEnd="16dp"
             android:paddingStart="32dp"
-            android:paddingTop="6dp"
-            android:text="Opponent"
-            android:textSize="24sp"
-            android:textColor="@android:color/white" />
+            android:text="Opponent" />
 
         <TextView
             android:id="@+id/opponentScoreLabel"
@@ -68,8 +64,8 @@
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:text="0"
-            android:textSize="24sp"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -77,6 +73,7 @@
         android:id="@+id/gameGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:alignmentMode="alignMargins"
         android:columnCount="3"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/playerBar"
@@ -87,57 +84,39 @@
 
         <Button
             android:id="@+id/gameButton11"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton12"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton13"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton21"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton22"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton23"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton31"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton32"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton33"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:textSize="36sp" />
+            style="@style/AppTheme.Game.Button.Move" />
 
     </GridLayout>
 
@@ -163,22 +142,15 @@
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:text="0"
-            android:textSize="24sp"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/playerLabel"
+            style="@style/AppTheme.Game.PlayerBar.TextLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#444444"
-            android:paddingBottom="6dp"
-            android:paddingEnd="32dp"
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:text="Player"
-            android:textSize="24sp"
-            android:textColor="@android:color/white" />
+            android:text="Player" />
 
     </LinearLayout>
 
