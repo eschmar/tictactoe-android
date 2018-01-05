@@ -3,6 +3,7 @@ package io.eschmann.tictactoe.activity;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +48,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
     private TicTacToeMatch ticTacToeMatch;
     // array of references to the 9 buttons (tiles) of the game board
-    int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
+    final int[] gameButtons = {R.id.gameButton11, R.id.gameButton12, R.id.gameButton13,
             R.id.gameButton21, R.id.gameButton22, R.id.gameButton23,
             R.id.gameButton31, R.id.gameButton32, R.id.gameButton33};
 
@@ -68,7 +69,39 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             finish();
         }
 
-        setupBoardButtons();
+        for (int i = 0; i < gameButtons.length; i++) {
+            final Button tile = (Button) findViewById(gameButtons[i]);
+            final int position = i;
+
+            tile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // make the move in the TicTacToeMatch object at given position.
+                    // if true is returned the player has won the game
+                    boolean playerWon = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
+
+                    // mark position by setting text and disabling button
+                    tile.setText(TicTacToeMatch.GAME_PLAYER_MARKER);
+                    tile.getBackground().setColorFilter(0xFF5F5FC4, PorterDuff.Mode.MULTIPLY);
+                    tile.setEnabled(false);
+
+                    // disable all untouched buttons since it is opponent's turn
+                    disableButtonsWithPattern(ticTacToeMatch.getState());
+
+                    // send the move as a message to the opponent
+                    Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
+                    websocket.send(gson.toJson(move));
+
+                    if (playerWon) {
+                        toast("You won the match!");
+                        playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
+                        clearAllButtons();
+                        enableAllButtons();
+                    }
+                }
+            });
+        }
 
         //
         //
@@ -76,6 +109,13 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         //
         //
     }
+//
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.gameButton11:
+//
+//        }
+//    }
 
     @Override
     protected void onPause() {
@@ -96,41 +136,6 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
         super.onDestroy();
         finish();
-    }
-
-    private void setupBoardButtons() {
-        for (int i = 0; i < gameButtons.length; i++) {
-            final Button tile = (Button) findViewById(gameButtons[i]);
-            final int position = i;
-
-            tile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    // make the move in the TicTacToeMatch object at given position.
-                    // if true is returned the player has won the game
-                    boolean playerWon = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
-
-                    // mark position by setting text and disabling button
-                    tile.setText(TicTacToeMatch.GAME_PLAYER_MARKER);
-                    tile.setEnabled(false);
-
-                    // disable all untouched buttons since it is opponent's turn
-                    disableButtonsWithPattern(ticTacToeMatch.getState());
-
-                    // send the move as a message to the opponent
-                    Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
-                    websocket.send(gson.toJson(move));
-
-                    if (playerWon) {
-                        toast("You won the match!");
-                        playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
-                        clearAllButtons();
-                        enableAllButtons();
-                    }
-                }
-            });
-        }
     }
 
     private final class MatchWebSocketListener extends WebSocketListener {
@@ -297,6 +302,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
     private void clearAllButtons() {
         for (int gameButton : gameButtons) {
             final Button tile = (Button) findViewById(gameButton);
+            tile.getBackground().clearColorFilter();
             tile.setText("");
         }
     }
