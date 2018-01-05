@@ -22,15 +22,15 @@ public class TicTacToeMatch {
         this.opponent = opponentName;
     }
 
-    public boolean opponentMakeMove(int row, int col) {
+    public GameState opponentMakeMove(int row, int col) {
         return makeMove(row, col, GAME_OPPONENT_MARKER);
     }
 
-    public boolean playerMakeMove(int row, int col) {
+    public GameState playerMakeMove(int row, int col) {
         return makeMove(row, col, GAME_PLAYER_MARKER);
     }
 
-    private boolean makeMove(int row, int col, String marker) {
+    private GameState makeMove(int row, int col, String marker) {
         int pos = coordToPos(row, col);
         if (!this.state[pos].equals("")) throw new IllegalStateException("Illegal move detected!");
 
@@ -38,13 +38,13 @@ public class TicTacToeMatch {
         return checkGameState(row, col, marker);
     }
 
-    private boolean checkGameState(int row, int col, String marker) {
+    private GameState checkGameState(int row, int col, String marker) {
         // check row for win
         for (int i = 0; i < GAME_SIZE; i++) {
             if (!this.state[coordToPos(row, i)].equals(marker)) break;
             if (i == GAME_SIZE - 1) {
                 resetGameAfterWin(marker);
-                 return true;
+                return marker.equals(GAME_OPPONENT_MARKER) ? GameState.LOST : GameState.WON;
             }
         }
 
@@ -53,7 +53,7 @@ public class TicTacToeMatch {
             if (!this.state[coordToPos(i, col)].equals(marker)) break;
             if (i == GAME_SIZE - 1) {
                 resetGameAfterWin(marker);
-                 return true;
+                return marker.equals(GAME_OPPONENT_MARKER) ? GameState.LOST : GameState.WON;
             }
         }
 
@@ -63,7 +63,7 @@ public class TicTacToeMatch {
                 if (!this.state[coordToPos(i, i)].equals(marker)) break;
                 if (i == GAME_SIZE - 1) {
                     resetGameAfterWin(marker);
-                     return true;
+                    return marker.equals(GAME_OPPONENT_MARKER) ? GameState.LOST : GameState.WON;
                 }
             }
         }
@@ -74,12 +74,23 @@ public class TicTacToeMatch {
                 if (!this.state[coordToPos(i, GAME_SIZE - 1 - i)].equals(marker)) break;
                 if (i == GAME_SIZE - 1) {
                     resetGameAfterWin(marker);
-                     return true;
+                    return marker.equals(GAME_OPPONENT_MARKER) ? GameState.LOST : GameState.WON;
                 }
             }
         }
 
-        return false;
+        //check for tie
+        for (int i = 0; i < GAME_SIZE; i++) {
+            for (int j = 0; j < GAME_SIZE; j++) {
+                if (this.state[coordToPos(i, j)].equals("")) break;
+                if (i == GAME_SIZE - 1 &&  j == GAME_SIZE - 1) {
+                    Arrays.fill(this.state, ""); // reset fields after tie
+                    return GameState.TIE;
+                }
+            }
+        }
+
+        return GameState.UNFINISHED;
     }
 
     private void resetGameAfterWin(String winner) {

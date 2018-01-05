@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eschmann.tictactoe.R;
 import io.eschmann.tictactoe.dialog.ErrorDialogFragment;
+import io.eschmann.tictactoe.model.GameState;
 import io.eschmann.tictactoe.model.Message;
 import io.eschmann.tictactoe.model.TicTacToeMatch;
 import okhttp3.OkHttpClient;
@@ -85,7 +86,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
         // make the move in the TicTacToeMatch object at given position.
         // if true is returned the player has won the game
-        boolean playerWon = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
+        GameState result = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
 
         // mark position by setting text and disabling button
         tile.setText(TicTacToeMatch.GAME_PLAYER_MARKER);
@@ -99,9 +100,13 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
         websocket.send(gson.toJson(move));
 
-        if (playerWon) {
+        if (result.equals(GameState.WON)) {
             toast("You won the match!");
             playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
+            clearAllButtons();
+            enableAllButtons();
+        } else if (result.equals(GameState.TIE)) {
+            toast("The game ended in a tie!");
             clearAllButtons();
             enableAllButtons();
         }
@@ -233,7 +238,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
                         // make the move in the TicTacToeMatch object at given position.
                         // if true is returned the opponent has won the game
-                        boolean opponentWon = ticTacToeMatch.opponentMakeMove(position / 3, position % 3);
+                        GameState result = ticTacToeMatch.opponentMakeMove(position / 3, position % 3);
 
                         // mark position by setting text and disabling button
                         final Button tile = findViewById(gameButtons[position]);
@@ -243,9 +248,13 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                         // enable all untouched buttons since the opponent made its move
                         enableButtonsWithPattern(ticTacToeMatch.getState());
 
-                        if (opponentWon) {
+                        if (result.equals(GameState.LOST)) {
                             toast("You lost!");
                             opponentScoreLabel.setText(String.valueOf(ticTacToeMatch.getOpponentScore()));
+                            clearAllButtons();
+                            enableAllButtons();
+                        } else if (result.equals(GameState.TIE)) {
+                            toast("The game ended in a tie!");
                             clearAllButtons();
                             enableAllButtons();
                         }
