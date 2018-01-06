@@ -34,7 +34,8 @@
                 android:id="@+id/joinButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/form_game_join" />
+                android:text="@string/form_game_join"
+                android:onClick="onJoinClick"/>
         </LinearLayout>
     </ScrollView>
 

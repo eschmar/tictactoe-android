@@ -295,6 +295,8 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                     }
                 });
                 break;
+            case Message.TYPE_SERVER_ABORT:
+                throw new IllegalArgumentException("Server detected illegal messages.");
             case Message.TYPE_QUIT:
                 toast("Opponent just left the game!");
                 this.onDestroy();
@@ -346,6 +348,8 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             Bundle dialogArgs = new Bundle();
             if (response != null && !response.isSuccessful()) {
                 dialogArgs.putInt("responseCode", response.code());
+            }else if (t instanceof IllegalArgumentException) {
+                dialogArgs.putInt("exception", ErrorDialogFragment.EXCEPTION_ILLEGAL);
             }
 
             // inform user about failure

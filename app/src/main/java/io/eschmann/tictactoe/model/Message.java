@@ -13,7 +13,7 @@ public class Message {
     private String type;
     private String payload;
 
-    public Message(String type) {
+    public Message(String type) throws IllegalArgumentException {
         this.type = type;
 
         if (!isValidType()) {
@@ -36,19 +36,19 @@ public class Message {
 
     public boolean isValidType() {
         return (
-            !type.equals(TYPE_MOVE) &&
-            !type.equals(TYPE_START) &&
-            !type.equals(TYPE_QUIT) &&
-            !type.equals(TYPE_ACTOR_PATH) &&
-            !type.equals(TYPE_SERVER_ABORT)
+            type.equals(TYPE_MOVE) ||
+            type.equals(TYPE_START) ||
+            type.equals(TYPE_QUIT) ||
+            type.equals(TYPE_ACTOR_PATH) ||
+            type.equals(TYPE_SERVER_ABORT)
         );
     }
 
     public boolean isValidGameType() {
         return (
-            !type.equals(TYPE_MOVE) &&
-            !type.equals(TYPE_START) &&
-            !type.equals(TYPE_QUIT)
+            type.equals(TYPE_MOVE) ||
+            type.equals(TYPE_START) ||
+            type.equals(TYPE_QUIT)
         );
     }
 }

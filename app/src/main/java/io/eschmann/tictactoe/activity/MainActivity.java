@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.eschmann.tictactoe.R;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,28 +30,27 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+    }
 
-        joinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                joinButton.setEnabled(false);
-                username = usernameInput.getText().toString();
-                if (username.matches("")) {
-                    Toast.makeText(getApplicationContext(), "Please enter a name.", Toast.LENGTH_SHORT).show();
-                    joinButton.setEnabled(true);
-                    return;
-                }
+    public void onJoinClick(View view) {
+        joinButton.setEnabled(false);
+        username = usernameInput.getText().toString();
 
-                // clean up
-                usernameInput.clearFocus();
-                hideKeyboard(view);
+        if (username.matches("")) {
+            Toast.makeText(getApplicationContext(), "Please enter a name.", Toast.LENGTH_SHORT).show();
+            joinButton.setEnabled(true);
+            return;
+        }
 
-                // start match
-                Intent intent = new Intent(MainActivity.this, MatchActivity.class);
-                intent.putExtra(INTENT_EXTRA_USERNAME, username);
-                startActivity(intent);
-            }
-        });
+        // clean up
+        usernameInput.clearFocus();
+        hideKeyboard(view);
+
+        // start match
+        Intent intent = new Intent(MainActivity.this, MatchActivity.class);
+        intent.putExtra(INTENT_EXTRA_USERNAME, username);
+        startActivity(intent);
     }
 
     @Override

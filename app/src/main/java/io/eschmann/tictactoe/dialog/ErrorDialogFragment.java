@@ -13,6 +13,8 @@ import io.eschmann.tictactoe.R;
  */
 
 public class ErrorDialogFragment extends DialogFragment {
+    public static final int EXCEPTION_ILLEGAL = 1;
+
     public interface ErrorDialogListener {
         void onErrorDialogDismiss(DialogFragment dialog);
     }
@@ -34,6 +36,13 @@ public class ErrorDialogFragment extends DialogFragment {
                 case 503:
                     title = getString(R.string.dialog_error_503_title);
                     message = getString(R.string.dialog_error_503_message);
+                    break;
+            }
+        } else if (getArguments().containsKey("exception")) {
+            switch (getArguments().getInt("exception")) {
+                case EXCEPTION_ILLEGAL:
+                    title = getString(R.string.dialog_exception_1_title);
+                    message = getString(R.string.dialog_exception_1_message);
                     break;
             }
         }
