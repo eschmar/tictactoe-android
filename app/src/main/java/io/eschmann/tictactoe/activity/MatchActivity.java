@@ -34,7 +34,7 @@ import okio.ByteString;
  * Created by marcel on 2017-12-16.
  */
 
-public class MatchActivity extends Activity implements ErrorDialogFragment.ErrorDialogListener, View.OnClickListener {
+public class MatchActivity extends Activity implements ErrorDialogFragment.ErrorDialogListener {
     private static final String LOG_TAG = MatchActivity.class.toString();
     private static final String LOG_TAG_WEBSOCKET = MatchActivity.MatchWebSocketListener.class.toString();
     private static final String MATCHMAKING_SERVER_URL = "ws://tic-tac-toe-lobby.herokuapp.com/connect";
@@ -71,18 +71,11 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             Toast.makeText(getApplicationContext(), "Unable to connect to matchmaking server.", Toast.LENGTH_LONG).show();
             finish();
         }
-
-        for (int buttonId : gameButtons) findViewById(buttonId).setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (Arrays.asList(gameButtons).contains(v.getId())) playWithButton(v.getId());
-    }
-
-    private void playWithButton(int buttonId) {
-        int position = Arrays.asList(gameButtons).indexOf(buttonId);
-        final Button tile = findViewById(buttonId);
+    public void onPlayButtonClick(View view) {
+        int position = Arrays.asList(gameButtons).indexOf(view.getId());
+        final Button tile = findViewById(view.getId());
 
         // make the move in the TicTacToeMatch object at given position.
         // if true is returned the player has won the game
@@ -106,7 +99,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
             clearAllButtons();
             enableAllButtons();
         } else if (result.equals(GameState.TIE)) {
-            toast("The game ended in a tie!");
+            toast("It's a tie!");
             clearAllButtons();
             enableAllButtons();
         }
@@ -124,7 +117,6 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         super.onDestroy();
         finish();
     }
-
 
     protected void quitGame(String reason) {
         if (websocket == null) return;

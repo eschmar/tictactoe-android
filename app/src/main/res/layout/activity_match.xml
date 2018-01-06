@@ -84,38 +84,47 @@
 
         <Button
             android:id="@+id/gameButton11"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton12"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton13"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton21"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton22"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton23"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton31"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton32"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
         <Button
             android:id="@+id/gameButton33"
+            android:onClick="onPlayButtonClick"
             style="@style/AppTheme.Game.Button.Move" />
 
     </GridLayout>
