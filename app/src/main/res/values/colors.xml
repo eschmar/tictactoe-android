@@ -9,4 +9,6 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
     <color name="accentColor">#ff4081</color>
+    <color name="playerColor">#97CC00</color>
+    <color name="opponentColor">#FF403E</color>
 </resources>

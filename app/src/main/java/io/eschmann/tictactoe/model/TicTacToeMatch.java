@@ -16,21 +16,17 @@ public class TicTacToeMatch {
     public static final String GAME_PLAYER_MARKER = "X";
     public static final String GAME_OPPONENT_MARKER = "O";
 
+    public static final String NOTIFICATION_WON = "You won!";
+    public static final String NOTIFICATION_TIE = "It's a tie.";
+    public static final String NOTIFICATION_LOST = "You lost.";
+
     public TicTacToeMatch(String opponentName) {
         this.state = new String[9];
         Arrays.fill(this.state, "");
         this.opponent = opponentName;
     }
 
-    public GameState opponentMakeMove(int row, int col) {
-        return makeMove(row, col, GAME_OPPONENT_MARKER);
-    }
-
-    public GameState playerMakeMove(int row, int col) {
-        return makeMove(row, col, GAME_PLAYER_MARKER);
-    }
-
-    private GameState makeMove(int row, int col, String marker) {
+    public GameState makeMove(int row, int col, String marker) {
         int pos = coordToPos(row, col);
         if (!this.state[pos].equals("")) throw new IllegalStateException("Illegal move detected!");
 

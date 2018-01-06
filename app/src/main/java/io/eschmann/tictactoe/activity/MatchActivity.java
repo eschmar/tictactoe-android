@@ -73,38 +73,6 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         }
     }
 
-    public void onPlayButtonClick(View view) {
-        int position = Arrays.asList(gameButtons).indexOf(view.getId());
-        final Button tile = findViewById(view.getId());
-
-        // make the move in the TicTacToeMatch object at given position.
-        // if true is returned the player has won the game
-        GameState result = ticTacToeMatch.playerMakeMove(position / 3, position % 3);
-
-        // mark position by setting text and disabling button
-        tile.setText(TicTacToeMatch.GAME_PLAYER_MARKER);
-        tile.getBackground().setColorFilter(0xFF5F5FC4, PorterDuff.Mode.MULTIPLY);
-        tile.setEnabled(false);
-
-        // disable all untouched buttons since it is opponent's turn
-        disableButtonsWithPattern(ticTacToeMatch.getState());
-
-        // send the move as a message to the opponent
-        Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
-        websocket.send(gson.toJson(move));
-
-        if (result.equals(GameState.WON)) {
-            toast("You won the match!");
-            playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
-            clearAllButtons();
-            enableAllButtons();
-        } else if (result.equals(GameState.TIE)) {
-            toast("It's a tie!");
-            clearAllButtons();
-            enableAllButtons();
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -228,33 +196,13 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                 websocket.send(gson.toJson(message));
                 break;
             case Message.TYPE_MOVE:
+                final int position = Integer.parseInt(message.getPayload());
+                final GameState result = ticTacToeMatch.makeMove(position / 3, position % 3, TicTacToeMatch.GAME_OPPONENT_MARKER);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int position = Integer.parseInt(message.getPayload());
-
-                        // make the move in the TicTacToeMatch object at given position.
-                        // if true is returned the opponent has won the game
-                        GameState result = ticTacToeMatch.opponentMakeMove(position / 3, position % 3);
-
-                        // mark position by setting text and disabling button
-                        final Button tile = findViewById(gameButtons[position]);
-                        tile.setText(TicTacToeMatch.GAME_OPPONENT_MARKER);
-                        tile.setEnabled(false);
-
-                        // enable all untouched buttons since the opponent made its move
-                        enableButtonsWithPattern(ticTacToeMatch.getState());
-
-                        if (result.equals(GameState.LOST)) {
-                            toast("You lost!");
-                            opponentScoreLabel.setText(String.valueOf(ticTacToeMatch.getOpponentScore()));
-                            clearAllButtons();
-                            enableAllButtons();
-                        } else if (result.equals(GameState.TIE)) {
-                            toast("The game ended in a tie!");
-                            clearAllButtons();
-                            enableAllButtons();
-                        }
+                        updateGameView(position, TicTacToeMatch.GAME_OPPONENT_MARKER, result);
                     }
                 });
                 break;
@@ -263,6 +211,62 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
                 this.onDestroy();
                 break;
         }
+    }
+
+    protected void updateGameView(int position, String marker, GameState latestOutcome) {
+        final Button tile = findViewById(gameButtons[position]);
+        boolean isPlayerMove = marker.equals(TicTacToeMatch.GAME_PLAYER_MARKER);
+
+        // mark position by setting text and disabling button
+        tile.setEnabled(false);
+        tile.setText(marker);
+
+        int colorCode = isPlayerMove ? getColor(R.color.playerColor) : getColor(R.color.opponentColor);
+        tile.getBackground().setColorFilter(colorCode, PorterDuff.Mode.MULTIPLY);
+
+
+        if (isPlayerMove) {
+            // disable all untouched buttons since it is opponent's turn
+            disableButtonsWithPattern(ticTacToeMatch.getState());
+        } else {
+            // enable all untouched buttons since the opponent made its move
+            enableButtonsWithPattern(ticTacToeMatch.getState());
+        }
+
+        if (latestOutcome.equals(GameState.UNFINISHED)) return;
+
+        // show game ending notification
+        switch (latestOutcome) {
+            case WON:
+                toast(TicTacToeMatch.NOTIFICATION_WON);
+                break;
+            case TIE:
+                toast(TicTacToeMatch.NOTIFICATION_TIE);
+                break;
+            case LOST:
+                toast(TicTacToeMatch.NOTIFICATION_LOST);
+                break;
+        }
+
+        // update scores
+        opponentScoreLabel.setText(String.valueOf(ticTacToeMatch.getOpponentScore()));
+        playerScoreLabel.setText(String.valueOf(ticTacToeMatch.getScore()));
+
+        // reset buttons
+        clearAllButtons();
+        enableAllButtons();
+    }
+
+    public void onPlayButtonClick(View view) {
+        int position = Arrays.asList(gameButtons).indexOf(view.getId());
+        final Button tile = findViewById(view.getId());
+
+        GameState result = ticTacToeMatch.makeMove(position / 3, position % 3, TicTacToeMatch.GAME_PLAYER_MARKER);
+        updateGameView(position, TicTacToeMatch.GAME_PLAYER_MARKER, result);
+
+        // send the move as a message to the opponent
+        Message move = new Message(Message.TYPE_MOVE, String.valueOf(position));
+        websocket.send(gson.toJson(move));
     }
 
     private void toast(final String message) {
