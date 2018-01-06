@@ -317,12 +317,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.i(LOG_TAG_WEBSOCKET, "Receiving : " + text);
-
-            try {
-                handleMessage(gson.fromJson(text, Message.class));
-            } catch (IllegalStateException e) {
-                Log.i(LOG_TAG_WEBSOCKET, "Not a gson obj.");
-            }
+            handleMessage(gson.fromJson(text, Message.class));
         }
 
         @Override
