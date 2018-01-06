@@ -79,18 +79,16 @@ public class TicTacToeMatch {
             }
         }
 
-        //check for tie
-        for (int i = 0; i < GAME_SIZE; i++) {
-            for (int j = 0; j < GAME_SIZE; j++) {
-                if (this.state[coordToPos(i, j)].equals("")) break;
-                if (i == GAME_SIZE - 1 &&  j == GAME_SIZE - 1) {
-                    Arrays.fill(this.state, ""); // reset fields after tie
-                    return GameState.TIE;
-                }
+        // check if moves are left to be made
+        for (int i = 0; i < this.state.length; i++) {
+            if (this.state[i].equals("")) {
+                return GameState.UNFINISHED;
             }
         }
 
-        return GameState.UNFINISHED;
+        // it's a tie, reset fields
+        Arrays.fill(this.state, "");
+        return GameState.TIE;
     }
 
     private void resetGameAfterWin(String winner) {
