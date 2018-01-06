@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import io.eschmann.tictactoe.R;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,26 +20,24 @@ import okio.ByteString;
 
 public class MainActivity extends Activity {
     String username;
-    Button joinButton;
-    TextView usernameInput;
-
     public static final String INTENT_EXTRA_USERNAME = "username";
+
+    @BindView(R.id.joinButton) Button joinButton;
+    @BindView(R.id.usernameInput) TextView usernameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // init view components
-        joinButton = (Button) findViewById(R.id.joinButton);
-        usernameInput = (TextView) findViewById(R.id.usernameInput);
-
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                joinButton.setEnabled(false);
                 username = usernameInput.getText().toString();
                 if (username.matches("")) {
                     Toast.makeText(getApplicationContext(), "Please enter a name.", Toast.LENGTH_SHORT).show();
+                    joinButton.setEnabled(true);
                     return;
                 }
 
@@ -52,6 +51,12 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        joinButton.setEnabled(true);
     }
 
     public void hideKeyboard(View view) {
