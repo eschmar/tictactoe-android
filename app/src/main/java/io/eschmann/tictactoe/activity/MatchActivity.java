@@ -99,6 +99,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
         websocket.send(gson.toJson(quit));
 
         // close socket
+        if (websocket == null) return;
         websocket.close(NORMAL_CLOSURE_STATUS, reason == null ? "Quit game." : reason);
     }
 

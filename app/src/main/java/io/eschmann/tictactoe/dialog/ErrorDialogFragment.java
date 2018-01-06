@@ -55,6 +55,8 @@ public class ErrorDialogFragment extends DialogFragment {
             }
         });
 
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 }
