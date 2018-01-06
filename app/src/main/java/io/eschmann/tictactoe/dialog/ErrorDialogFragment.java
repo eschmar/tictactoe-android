@@ -3,7 +3,6 @@ package io.eschmann.tictactoe.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -15,7 +14,7 @@ import io.eschmann.tictactoe.R;
 
 public class ErrorDialogFragment extends DialogFragment {
     public interface ErrorDialogListener {
-        public void onDialogDismiss(DialogFragment dialog);
+        void onErrorDialogDismiss(DialogFragment dialog);
     }
 
     public ErrorDialogListener dialogListener;
@@ -43,7 +42,7 @@ public class ErrorDialogFragment extends DialogFragment {
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                dialogListener.onDialogDismiss(ErrorDialogFragment.this);
+                dialogListener.onErrorDialogDismiss(ErrorDialogFragment.this);
             }
         });
 

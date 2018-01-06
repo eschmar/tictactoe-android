@@ -103,7 +103,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
     }
 
     @Override
-    public void onDialogDismiss(DialogFragment dialog) {
+    public void onErrorDialogDismiss(DialogFragment dialog) {
         onDestroy();
     }
 
