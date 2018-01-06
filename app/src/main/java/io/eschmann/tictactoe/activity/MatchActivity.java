@@ -120,22 +120,27 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
     @Override
     protected void onDestroy() {
-        if (websocket != null) {
-            // inform opponent about quitting
-            Message quit = new Message(Message.TYPE_QUIT);
-            websocket.send(gson.toJson(quit));
-
-            // close socket
-            websocket.close(NORMAL_CLOSURE_STATUS, "Quit.");
-        }
-
+        quitGame(null);
         super.onDestroy();
         finish();
+    }
+
+
+    protected void quitGame(String reason) {
+        if (websocket == null) return;
+
+        // inform opponent about quitting
+        Message quit = new Message(Message.TYPE_QUIT);
+        websocket.send(gson.toJson(quit));
+
+        // close socket
+        websocket.close(NORMAL_CLOSURE_STATUS, reason == null ? "Quit game." : reason);
     }
 
     private final class MatchWebSocketListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
+            // connected to server, waiting for player.
         }
 
         @Override
@@ -156,7 +161,7 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            webSocket.close(MatchActivity.NORMAL_CLOSURE_STATUS, reason);
+            quitGame(reason);
             Log.i(LOG_TAG_WEBSOCKET, "Closing : " + code + " / " + reason);
 
             websocket = null;
