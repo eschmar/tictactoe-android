@@ -94,6 +94,12 @@ public class MatchActivity extends Activity implements ErrorDialogFragment.Error
     protected void quitGame(String reason) {
         if (websocket == null) return;
 
+        // withdraw from matchmaking
+        if (ticTacToeMatch == null) {
+            Message withdraw = new Message(Message.TYPE_WITHDRAW);
+            websocket.send(gson.toJson(withdraw));
+        }
+
         // inform opponent about quitting
         Message quit = new Message(Message.TYPE_QUIT);
         websocket.send(gson.toJson(quit));
