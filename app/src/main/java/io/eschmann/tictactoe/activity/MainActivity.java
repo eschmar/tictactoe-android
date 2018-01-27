@@ -13,6 +13,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eschmann.tictactoe.R;
+import io.eschmann.tictactoe.request.HerokuWakeupRequest;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -56,6 +57,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        new HerokuWakeupRequest().run();
         joinButton.setEnabled(true);
     }
 
